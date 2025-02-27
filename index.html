@@ -265,7 +265,7 @@
                 <button class="logout-btn" id="logoutButton">Logout</button>
             </div>
         </div>
-        <iframe src="https://chat.qwenlm.ai/?no-captcha=1" class="content-iframe"
+        <iframe src="https://chat.qwenlm.ai/" class="content-iframe"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
     </div>
 
@@ -275,10 +275,8 @@
         function addUser(username, password, sessionLimit) {
             allowedCredentials.push({ username, password, sessionLimit });
         }
-
         // Daftar kredensial awal
         const allowedCredentials = [];
-
         // Menambahkan pengguna secara dinamis
         addUser("ukmiptek", "admin123", 999999); // no limit
         addUser("admin", "CtrlAltOwner2024", 1); // 1 menit
@@ -286,23 +284,32 @@
         addUser("sys", "QwenAccessOnly$$", 15); // 15 menit
         addUser("root", "RestrictedLogin##", 60); // 1 jam
         addUser("guest", "GuestPass", 0.5); // 30 detik
-
+        // Menambahkan pengguna baru dengan masa aktif 24 jam (1440 menit)
+        addUser("UKM IPTEK - Aprilius Moto Gurin", "aprilius1234", 1440);
+        addUser("UKM IPTEK - Fidia Putri Yani", "fidia5678", 1440);
+        addUser("UKM IPTEK - Cafri Maryo Dihak", "cafri2024", 1440);
+        addUser("UKM IPTEK - Reza Maulana", "reza9101", 1440);
+        addUser("UKM IPTEK - Herry Wibowo", "herry1213", 1440);
+        addUser("UKM IPTEK - Siti Zubaidah", "siti1415", 1440);
+        addUser("UKM IPTEK - Adinda Hani Tasya", "adinda1617", 1440);
+        addUser("UKM IPTEK - Dea Amelia", "dea1819", 1440);
+        addUser("UKM IPTEK - Safa", "safa2021", 1440);
+        addUser("UKM IPTEK - Danu Tri Anugrah", "danu2223", 1440);
+        addUser("UKM IPTEK - Irfan Rifqi", "irfan2425", 1440);
+        addUser("UKM IPTEK - Dandy", "dandy2627", 1440);
+        addUser("UKM IPTEK - Syarif Rizik", "syarif2829", 1440);
         let sessionTimeout;
         let isSessionBarCollapsed = false;
-
         document.getElementById('accessForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-
             const user = allowedCredentials.find(cred =>
                 cred.username === username && cred.password === password
             );
-
             if (user) {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('protectedSection').style.display = 'block';
-
                 startSession(user.sessionLimit * 60000); // Konversi menit ke milidetik
                 document.querySelectorAll("input").forEach(input => input.value = "");
             } else {
@@ -310,18 +317,26 @@
                     "Akses ditolak - Kredensial tidak valid";
             }
         });
-
         function startSession(timeout) {
             let remaining = timeout;
-
             const updateCounter = () => {
                 const seconds = Math.floor(remaining / 1000);
                 const counterText = document.getElementById('sessionCounter');
-
                 if (seconds > 0) {
-                    const minutes = Math.floor(seconds / 60);
+                    // Hitungan mundur dengan format hari/jam/menit/detik
+                    const days = Math.floor(seconds / 86400);
+                    const hours = Math.floor((seconds % 86400) / 3600);
+                    const minutes = Math.floor((seconds % 3600) / 60);
                     const secs = seconds % 60;
-                    counterText.textContent = `Session aktif: ${minutes}m ${secs}s`;
+
+                    let parts = [];
+                    if (days > 0) parts.push(days + ' hari');
+                    if (hours > 0) parts.push(hours + ' jam');
+                    if (minutes > 0) parts.push(minutes + ' menit');
+                    if (secs > 0) parts.push(secs + ' detik');
+
+                    counterText.textContent = `Session aktif: ${parts.join(' ')}`;
+
                     if (seconds <= 10) {
                         counterText.style.color = '#ffebee';
                         counterText.style.fontWeight = '700';
@@ -332,24 +347,19 @@
                 }
                 remaining -= 1000;
             };
-
             sessionTimeout = setInterval(updateCounter, 1000);
             updateCounter();
         }
-
         function logout() {
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('protectedSection').style.display = 'none';
             clearInterval(sessionTimeout);
             resetSessionUI();
         }
-
         document.getElementById('logoutButton').addEventListener('click', logout);
-
         document.getElementById('toggleButton').addEventListener('click', () => {
             const sessionBar = document.getElementById('sessionBar');
             const toggleButton = document.getElementById('toggleButton');
-
             if (isSessionBarCollapsed) {
                 sessionBar.style.padding = '18px';
                 toggleButton.textContent = 'Sembunyikan Limit';
@@ -359,10 +369,8 @@
                 toggleButton.textContent = 'Tampilkan Limit';
                 document.getElementById('sessionCounter').style.display = 'none';
             }
-
             isSessionBarCollapsed = !isSessionBarCollapsed;
         });
-
         function resetSessionUI() {
             document.getElementById('sessionCounter').style.color = 'white';
             document.getElementById('sessionCounter').style.fontWeight = '600';
